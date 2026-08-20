@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "release": "0.1.0",
+  "comment": "R3/D-T2-026: semantic classes are doctrine; this file is the RELEASE-TIME mapping to Claude Code model aliases (not dated commercial model IDs). Re-validated against the installed CLI at every release. Unknown/unavailable mapping falls back to 'inherit' (session model). Mapping changes must never silently increase cost, authority, or concurrency.",
+  "classes": {
+    "ECONOMY": "haiku",
+    "STANDARD": "sonnet",
+    "DEEP-REASONING": "opus"
+  },
+  "fallback": "inherit",
+  "placeholders": {
+    "{{MODEL_ECONOMY}}": "ECONOMY",
+    "{{MODEL_STANDARD}}": "STANDARD",
+    "{{MODEL_DEEP}}": "DEEP-REASONING"
+  }
+}

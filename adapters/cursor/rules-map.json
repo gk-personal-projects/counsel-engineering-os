@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "comment": "Cursor rule emission map: runtime/rules/<file> -> .cursor/rules/counsel-<name>.mdc frontmatter. alwaysApply rules are ALSO delivered via the AGENTS.md sentinel block (Cursor reads AGENTS.md natively); .mdc emission is belt-and-suspenders for always-on and the only channel for future glob-scoped rules. Both are installer-generated from one source and manifest-tracked.",
+  "rules": {
+    "authority.md":     { "alwaysApply": true },
+    "evidence.md":      { "alwaysApply": true },
+    "orchestration.md": { "alwaysApply": true },
+    "cost-governor.md": { "alwaysApply": true },
+    "work-control.md":  { "alwaysApply": true },
+    "safety-base.md":   { "alwaysApply": true },
+    "modes.md":         { "alwaysApply": false, "description": "Mode contracts (Learn/Pair/Autopilot/CTO); load when the user changes mode" }
+  }
+}

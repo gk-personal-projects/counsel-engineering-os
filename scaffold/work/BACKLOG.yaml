@@ -1,0 +1,7 @@
+# BACKLOG -- long-horizon decomposed + candidate work. NOT loaded during routine execution.
+# Read only at triage/planning or when replenishing the working queue (D-T2-020 SS7).
+# DISCOVERED WORK LANDS HERE AS candidate -- discovery never authorizes execution (SS1/SS6).
+
+candidates: []      # discovered work awaiting triage. Entry: {id, title, source_ticket, outcome?, note}
+                    # telemetry-sourced (feedback skill) adds: {source: telemetry, evidence: <insight query / event counts / issue id>}
+decomposed: []      # approved-outcome work not yet promoted to the working queue

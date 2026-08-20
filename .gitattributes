@@ -1,0 +1,8 @@
+# Line-ending policy: sh scripts MUST stay LF (CRLF breaks POSIX shells);
+# PowerShell tolerates either, pinned CRLF for Windows friendliness.
+* text=auto
+*.sh text eol=lf
+*.ps1 text eol=crlf
+*.md text
+*.yaml text
+*.json text

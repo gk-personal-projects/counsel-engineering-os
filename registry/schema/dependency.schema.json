@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Counsel external dependency",
+  "type": "object",
+  "required": ["id", "name", "classification", "purpose", "detect", "install_source", "verify", "fallback", "consequential_install"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "name": { "type": "string" },
+    "classification": { "enum": ["core-required", "capability-required", "optional-integration", "upstream-source-only", "unnecessary"] },
+    "purpose": { "type": "string" },
+    "required_by": { "type": "array", "items": { "type": "string" } },
+    "platforms": { "type": "array", "items": { "enum": ["windows", "macos", "linux"] } },
+    "detect": { "type": "string", "description": "How doctor detects it. Functional detection preferred over presence (e.g. hook actually fires)." },
+    "install_source": { "type": "string", "description": "Authoritative source URL/pointer. Never invent install commands; stored instructions are version-sensitive." },
+    "verify": { "type": "string", "description": "How a fix is re-verified after install." },
+    "fallback": { "type": "string" },
+    "remove": { "type": "string" },
+    "version_sensitive": { "type": "boolean" },
+    "consequential_install": { "type": "boolean", "description": "true => install is ASK-FIRST per D-T2-020 §2 (system-wide software, plugins, paid resources)." },
+    "last_verified": { "type": "string" },
+    "credentials": {
+      "type": "array",
+      "description": "Credentials this dependency needs to actually FUNCTION. Presence of the tool is not readiness; doctor gates READY on liveness of every credential whose required_by intersects the installed capabilities (D-T2-030).",
+      "items": {
+        "type": "object",
+        "required": ["id", "probe", "cost", "mutating", "rotate"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "env": { "type": "array", "items": { "type": "string" }, "description": "Env var names checked in order; first one set wins. Omit when the credential lives in a tool-managed store (e.g. gh keyring) - then `via` explains where." },
+          "via": { "type": "string", "description": "Where the credential lives when it is not an env var (keyring, CLI login, config file)." },
+          "scope": { "type": "string", "description": "What the credential grants. Used to explain blast radius when it leaks or dies." },
+          "probe": {
+            "type": "string",
+            "description": "Named liveness probe. `none` is legitimate and must carry `probe_note` - an honest UNKNOWN beats a fabricated LIVE. Built-ins: gh-auth | posthog-me | sentry-api | supabase-auth | vercel-whoami | http-get-200 | cmd-exit0 | none"
+          },
+          "probe_note": { "type": "string", "description": "REQUIRED when probe is `none`: why liveness cannot be established, and what does establish it instead." },
+          "probe_url": { "type": "string", "description": "For probe http-get-200. Must be a read-only endpoint." },
+          "probe_auth": { "type": "string", "description": "For probe http-get-200: `bearer` | `header:<Name>` | `query:<param>`." },
+          "probe_cmd": { "type": "string", "description": "For probe cmd-exit0. Registry-authored ONLY - the model never invents a probe command. Must be read-only and non-mutating." },
+          "cost": { "enum": ["free", "metered", "unknown"], "description": "metered/unknown probes are ASK-FIRST per D-T2-020 and are never run unattended." },
+          "mutating": { "type": "boolean", "description": "MUST be false. A probe that writes (events, resources, rows) is not a diagnostic - it is a side effect. Doctor refuses to run mutating probes." },
+          "rotate": { "type": "string", "description": "Authoritative URL/pointer for rotating or revoking this credential. Surfaced verbatim in the DEAD remediation card." },
+          "required_by": { "type": "array", "items": { "type": "string" }, "description": "Capability ids. A DEAD credential blocks only if one of these is installed; otherwise it is informational." }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,253 @@
+# Counsel Engineering OS -- external dependency registry
+# Provenance: ORIGINAL (Apache-2.0). Schema: schema/dependency.schema.json.
+# Postures ruled at Gate T2-A (D-T2-004/005) and audited 2026-08-12.
+# Doctor rule: missing optional/conditional deps NEVER make the system unhealthy.
+# Doctor rule 2 (D-T2-030): a present tool with a dead or unproven credential is NOT ready.
+#   Credentials live in `credentials:` blocks below. Probes are read-only, non-mutating, and
+#   opt-in (-Probe); unprobed liveness reports UNKNOWN and READY is withheld. Never fabricate LIVE.
+
+- id: claude-code
+  name: Claude Code
+  classification: core-required
+  purpose: Runtime substrate for the entire OS.
+  required_by: [counsel-core]
+  platforms: [windows, macos, linux]
+  detect: "claude --version exits 0"
+  install_source: "https://claude.com/claude-code"
+  verify: "claude --version"
+  fallback: none
+  remove: n/a
+  version_sensitive: true
+  consequential_install: true
+  last_verified: "2026-08-12"
+
+- id: git
+  name: Git
+  classification: core-required
+  purpose: Repository state, checkpoint machine-state capture, all workflows.
+  required_by: [counsel-core, builder]
+  platforms: [windows, macos, linux]
+  detect: "git --version exits 0"
+  install_source: "https://git-scm.com/downloads"
+  verify: "git --version"
+  fallback: "Session continuity degrades to file-only snapshots (no git drift detection); workflows requiring git are unavailable."
+  remove: n/a
+  version_sensitive: false
+  consequential_install: true
+  last_verified: "2026-08-12"
+
+- id: gh
+  name: GitHub CLI
+  classification: capability-required
+  purpose: github-work-sync capability; PR workflows.
+  required_by: [github-work-sync]
+  platforms: [windows, macos, linux]
+  detect: "gh --version exits 0 AND gh auth status exits 0 (functional)"
+  install_source: "https://cli.github.com"
+  verify: "gh auth status"
+  fallback: "Local-first work ledger; manual PR creation."
+  remove: "Disable github-work-sync capability; ledger unaffected."
+  version_sensitive: false
+  consequential_install: true
+  last_verified: "2026-08-12"
+  credentials:
+    - id: gh-token
+      env: [GH_TOKEN, GITHUB_TOKEN]
+      via: "gh auth login (OS keyring) when no env var is set"
+      scope: "repo, read:org -- PR create/read, issue sync"
+      probe: gh-auth
+      cost: free
+      mutating: false
+      rotate: "https://github.com/settings/tokens"
+      required_by: [github-work-sync]
+
+- id: superpowers
+  name: Superpowers (obra/superpowers plugin)
+  classification: optional-integration
+  purpose: Enhanced process-skill workflows when present and functional.
+  required_by: [superpowers-integration]
+  platforms: [windows, macos, linux]
+  detect: "Plugin present AND its SessionStart bootstrap actually fired this session (functional check -- on Windows without Git Bash it silently no-ops; presence is not enough)."
+  install_source: "https://github.com/obra/superpowers (marketplace: superpowers@claude-plugins-official)"
+  verify: "New session shows the superpowers bootstrap block; skills invocable."
+  fallback: "Counsel-native debugging/review/verification in Core."
+  remove: "Uninstall via plugin manager; Counsel behavior unchanged."
+  version_sensitive: true
+  consequential_install: true
+  last_verified: "2026-08-12"
+
+- id: agent-scaffold
+  name: Agent Scaffold (jeremyary/agent-scaffold)
+  classification: upstream-source-only
+  purpose: Upstream architecture source for derived material. NEVER installed or cloned by users; attribution carried in NOTICE/PROVENANCE.
+  required_by: []
+  platforms: []
+  detect: n/a
+  install_source: "https://github.com/jeremyary/agent-scaffold (reference only)"
+  verify: n/a
+  fallback: n/a
+  remove: n/a
+  version_sensitive: false
+  consequential_install: false
+  last_verified: "2026-08-12"
+
+- id: node
+  name: Node.js
+  classification: capability-required
+  purpose: Only when the target project is a Node project (project commands, tests).
+  required_by: []
+  platforms: [windows, macos, linux]
+  detect: "node --version exits 0; relevance decided by project stack detection at onboarding"
+  install_source: "https://nodejs.org"
+  verify: "node --version"
+  fallback: "Not needed for non-Node projects; Core never requires it."
+  remove: n/a
+  version_sensitive: true
+  consequential_install: true
+  last_verified: "2026-08-12"
+
+- id: python
+  name: Python
+  classification: capability-required
+  purpose: Only when the target project is a Python project.
+  required_by: []
+  platforms: [windows, macos, linux]
+  detect: "python --version or python3 --version exits 0; relevance from project stack"
+  install_source: "https://www.python.org/downloads/"
+  verify: "python --version"
+  fallback: "Not needed otherwise; Core never requires it (D-T2-009: no hidden Python)."
+  remove: n/a
+  version_sensitive: true
+  consequential_install: true
+  last_verified: "2026-08-12"
+
+- id: docker
+  name: Docker
+  classification: capability-required
+  purpose: Only for projects with containerized workflows.
+  required_by: []
+  platforms: [windows, macos, linux]
+  detect: "docker --version exits 0; relevance from project stack"
+  install_source: "https://docs.docker.com/get-docker/"
+  verify: "docker --version"
+  fallback: "Not needed otherwise."
+  remove: n/a
+  version_sensitive: false
+  consequential_install: true
+  last_verified: "2026-08-12"
+
+- id: supabase-cli
+  name: Supabase CLI
+  classification: capability-required
+  purpose: Only for projects using Supabase.
+  required_by: [ship-loop]   # optional dependency: only when the project's stack uses Supabase
+  platforms: [windows, macos, linux]
+  detect: "supabase --version exits 0; relevance from project stack"
+  install_source: "https://supabase.com/docs/guides/cli"
+  verify: "supabase --version"
+  fallback: "Not needed otherwise."
+  remove: n/a
+  version_sensitive: true
+  consequential_install: true
+  last_verified: "2026-08-12"
+  credentials:
+    - id: supabase-access-token
+      env: [SUPABASE_ACCESS_TOKEN]
+      via: "supabase login (CLI-managed token store) when no env var is set"
+      scope: "management API -- list/link projects, push migrations"
+      probe: supabase-auth
+      cost: free
+      mutating: false
+      rotate: "https://supabase.com/dashboard/account/tokens"
+      required_by: [ship-loop]
+
+- id: vercel-cli
+  name: Vercel CLI
+  classification: capability-required
+  purpose: Only for projects deploying to Vercel.
+  required_by: [ship-loop]
+  platforms: [windows, macos, linux]
+  detect: "vercel --version exits 0; relevance from project stack"
+  install_source: "https://vercel.com/docs/cli"
+  verify: "vercel --version"
+  fallback: "Not needed otherwise."
+  remove: n/a
+  version_sensitive: true
+  consequential_install: true
+  last_verified: "2026-08-12"
+  credentials:
+    - id: vercel-token
+      env: [VERCEL_TOKEN]
+      via: "vercel login (CLI-managed) when no env var is set"
+      scope: "deploy, read env, read logs"
+      probe: vercel-whoami
+      cost: free
+      mutating: false
+      rotate: "https://vercel.com/account/tokens"
+      required_by: [ship-loop]
+
+- id: posthog
+  name: PostHog (SaaS account + SDK)
+  classification: capability-required
+  purpose: Ship-loop telemetry - analytics, funnels, feature flags, experiments, surveys. Free tier ~1M events/mo.
+  required_by: [ship-loop]
+  platforms: [windows, macos, linux]
+  detect: "posthog-js (or posthog-node) in project dependencies AND a POSTHOG key env var configured"
+  install_source: "https://posthog.com (account) + npm posthog-js"
+  verify: "scripts/ship/verify-instrumentation sends a canary event and polls until queryable"
+  fallback: "No product telemetry - the feedback skill has nothing to read; ship still works."
+  remove: "Uninstall SDK packages; revoke the project key."
+  version_sensitive: false
+  consequential_install: true   # third-party account + data leaves the machine - explicit consent
+  last_verified: "2026-08-17"
+  credentials:
+    - id: posthog-project-key
+      env: [POSTHOG_KEY, NEXT_PUBLIC_POSTHOG_KEY, POSTHOG_PROJECT_KEY]
+      scope: "capture-only (write events); public by design -- ships in client bundles"
+      probe: none
+      probe_note: "The capture endpoint returns 200 for any well-formed key, so a 200 proves nothing about validity. End-to-end liveness comes only from scripts/ship/verify-instrumentation (canary -> queryable), which needs the read-scoped personal API key."
+      cost: free
+      mutating: false
+      rotate: "PostHog > Project settings > Project API key"
+      required_by: [ship-loop]
+    - id: posthog-personal-api-key
+      env: [POSTHOG_PERSONAL_API_KEY]
+      scope: "read -- query events; this is the key that lets the feedback skill READ anything"
+      probe: posthog-me
+      cost: free
+      mutating: false
+      rotate: "PostHog > Personal settings > Personal API keys"
+      required_by: [ship-loop]
+
+- id: sentry
+  name: Sentry (SaaS account + SDK)
+  classification: capability-required
+  purpose: Ship-loop error monitoring at debug depth. Developer free tier has hard-stop limits (no surprise bills).
+  required_by: [ship-loop]
+  platforms: [windows, macos, linux]
+  detect: "@sentry/* in project dependencies AND a DSN configured"
+  install_source: "https://sentry.io (account) + npx @sentry/wizard"
+  verify: "wizard-generated config present; a test error appears in the Sentry project"
+  fallback: "PostHog error tracking (shallower) or none - errors only visible in platform logs."
+  remove: "Uninstall SDK packages; revoke the DSN."
+  version_sensitive: false
+  consequential_install: true   # third-party account + data leaves the machine - explicit consent
+  last_verified: "2026-08-17"
+  credentials:
+    - id: sentry-dsn
+      env: [SENTRY_DSN, NEXT_PUBLIC_SENTRY_DSN]
+      scope: "ingest-only (write events); public by design"
+      probe: none
+      probe_note: "Sentry exposes no unauthenticated endpoint that separates a live DSN from a well-formed dead one. Liveness is established only by a test error appearing in the project (see this dependency's verify)."
+      cost: free
+      mutating: false
+      rotate: "Sentry > Project settings > Client Keys (DSN)"
+      required_by: [ship-loop]
+    - id: sentry-auth-token
+      env: [SENTRY_AUTH_TOKEN]
+      scope: "org read + release create -- sourcemap upload, release marking"
+      probe: sentry-api
+      cost: free
+      mutating: false
+      rotate: "https://sentry.io/settings/account/api/auth-tokens/"
+      required_by: [ship-loop]

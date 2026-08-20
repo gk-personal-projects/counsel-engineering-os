@@ -1,0 +1,9 @@
+{
+  "name": "counsel",
+  "displayName": "Counsel Engineering OS",
+  "version": "0.1.10",
+  "description": "AI CTO and engineering team for Claude Code that starts small and grows with your project. Pre-alpha - expect rough edges; setup completes on Windows only.",
+  "author": { "name": "Sam Sherzad" },
+  "license": "Apache-2.0",
+  "skills": "./runtime/skills/"
+}

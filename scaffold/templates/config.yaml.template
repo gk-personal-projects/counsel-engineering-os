@@ -1,0 +1,16 @@
+# .counsel/config.yaml -- project capability configuration (CONTROL PLANE, user-owned).
+# Instantiated by /counsel:onboard. Only the user changes autonomy/lease values.
+# Provenance: ORIGINAL (Apache-2.0).
+schema_version: 1
+control_plane_schema: {{CONTROL_PLANE_SCHEMA}}
+runtime_version: "{{RUNTIME_VERSION}}"
+installed_layers: [{{LAYERS}}]
+mode: {{MODE}}
+harness: {{HARNESS}}         # claude | cursor | codex (runtime/HARNESS.md); set at install
+# memory:                    # uncomment to link a shared cross-project memory store
+#   shared_dir: <absolute or repo-relative path>   # written by /counsel:onboard, never hand-edited
+autonomy_lease: ALPHA-SAFE   # 1 active ticket, 3-ticket batches, <=2 concurrent agents, <=2 failed cycles
+model_classes:               # resolved from registry/model-map.json at install (R3); fallback: inherit
+  economy: "{{MODEL_ECONOMY_VALUE}}"
+  standard: "{{MODEL_STANDARD_VALUE}}"
+  deep_reasoning: "{{MODEL_DEEP_VALUE}}"

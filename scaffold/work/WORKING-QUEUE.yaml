@@ -1,0 +1,13 @@
+# WORKING QUEUE -- bounded near-term horizon. THE routine orchestration read (D-T2-020 SS7).
+# Contains ONLY: ACTIVE + READY + relevant BLOCKED. Long-horizon work lives in BACKLOG.yaml.
+# One compact entry per ticket (~1 line of facts); full detail in tickets/<id>.md, loaded
+# only when a ticket activates. Keep the READY horizon small (rule of thumb: <= 7 entries).
+
+active: []          # max per lease (ALPHA-SAFE: 1). Entry: {id, title, lane, risk, cost_class, autonomy, next}
+ready: []           # ordered; Counsel sequences within the human-approved lane
+blocked: []         # entry adds: {blocked_on, owner}
+batch:              # D-T2-020 SS5: consecutive EXECUTE tickets since last human review
+  count: 0
+  max_before_review: 3
+quick_log: []       # fast-path SMALL work (work-control). Entry: {date, what, verify}
+                    # e.g. {date: 2026-01-15, what: "fix typo in README", verify: "n/a (docs)"}

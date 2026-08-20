@@ -1,0 +1,8 @@
+# OS/editor junk
+Thumbs.db
+.DS_Store
+# Dogfooding/test residue — session state never belongs in the product repo
+.counsel/
+*.local.json
+# Node/tooling if examples grow them
+node_modules/

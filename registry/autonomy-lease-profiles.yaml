@@ -1,0 +1,57 @@
+# Counsel Engineering OS -- autonomy lease profiles
+# Provenance: ORIGINAL (Apache-2.0). Source of authority: D-T2-020 SS5/SS17.
+# The installer instantiates the default profile into the project control plane
+# (.counsel/config.yaml). ONLY THE USER changes a project's active lease.
+# HARD INVARIANT: Counsel may never autonomously increase its own authority or budget.
+
+default_profile: ALPHA-SAFE
+
+profiles:
+  ALPHA-SAFE:
+    active_tickets: { max: 1 }
+    sequential_execute_tickets_before_review: { max: 3 }
+    agents: { main_worker: 1, supporting_agents_max: 2, parallel_agents_max: 2 }
+    failed_implementation_cycles: { max: 2 }
+    scope_expansion: { automatic: false }
+    new_dependencies: { default: propose }
+    architecture_change: { default: propose }
+    security_boundary_change: { default: propose_or_ask_first }
+    control_plane_change: { default: propose }
+    guardrail_weakening: { default: ask_first }
+    production: { default: ask_first }
+    push_publish_release: { default: ask_first }
+    destructive_operation: { default: ask_first }
+    notes: >
+      Bounded batches, not continuous prompts: up to 3 consecutive qualifying low-risk
+      tickets inside the same approved outcome/lane, then checkpoint + concise progress
+      review. Autonomy is earned: after a meaningful successful sample (low reopen/failed/
+      scope-drift rates, zero governance violations) Counsel may RECOMMEND a larger lease;
+      it may never grant itself one.
+
+# Monthly/period budget model (D-T2-020 SS9). Configurable defaults, not accounting rules.
+budget:
+  allocation_defaults:
+    now_execution: 0.60
+    testing_review_verification: 0.15
+    exploration_debugging: 0.10
+    reserve_unexpected: 0.10
+    deep_architecture_redteam: 0.05
+  tripwires:   # applied ONLY when actual usage is observable; never invent usage numbers
+    - { upto: 0.60, mode: NORMAL }
+    - { upto: 0.75, mode: CAUTION,  policy: "surface trend; avoid speculative exploration; ECONOMY for mechanical work" }
+    - { upto: 0.90, mode: CONSERVE, policy: "NOW outcomes only; reduce parallelism; no optional deep reviews; aggressive context isolation; defer low-value backlog" }
+    - { upto: 1.00, mode: RESERVE,  policy: "blockers/security/explicit requests only; DEEP-REASONING needs clear justification; no speculative self-improvement" }
+    - { above: 1.00, mode: STOP,    policy: "no autonomous execution without explicit user authorization" }
+
+# Semantic model classes (D-T2-016/D-T2-020 SS8). Mapped to products at config time.
+model_classes:
+  ECONOMY:        { current_mapping: haiku-class,  use: "mechanical sweeps, formatting, inventory, extraction, delegated exploratory reads" }
+  STANDARD:       { current_mapping: sonnet-class, use: "normal implementation, debugging, tests, bounded review (DEFAULT)" }
+  DEEP-REASONING: { current_mapping: opus-class,   use: "architecture, consequential security, red-team, L3/L4; justified by consequence, never habit; no parallel use except justified L4 independent review" }
+
+# Ticket cost classes (D-T2-020 SS10)
+ticket_cost_classes:
+  SMALL:    { staffing: "L0-L1", workers: 1, model: "ECONOMY/STANDARD", attempts_max: 1 }
+  STANDARD: { staffing: "L2",    workers: "1 + <=2 supporting", model: "STANDARD", attempts_max: 2 }
+  DEEP:     { staffing: "L3-L4", workers: "principal review pattern", model: "DEEP-REASONING justified", attempts_max: 2, note: "usually PROPOSE/ASK-FIRST before consequential implementation" }
+  reclassification_rule: "A SMALL ticket that starts requiring a DEEP execution pattern: STOP, reclassify, propose. Never silently consume a larger budget."

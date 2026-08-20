@@ -1,0 +1,151 @@
+# Counsel Engineering OS -- capability registry
+# Provenance: ORIGINAL (Apache-2.0). Schema: schema/capability.schema.json.
+# Single source driving doctor, recommend, install/enable/disable/remove, and permission
+# baseline generation. Dormant capability = files not present in the project = zero context.
+
+- id: counsel-core
+  name: Counsel Core
+  layer: core
+  provides: [cto-orchestration, evidence-law, safety-baseline, onboarding, doctor, mentor,
+             grok, planning, native-debugging, native-review, verification,
+             session-continuity, capability-discovery, work-control, cost-governor]
+  requires: { capabilities: [], tools: [claude-code, git] }
+  optional_dependencies: []
+  status_checks: [rule, skill, script, functional]
+  recommended_for: [everyone]
+  context_cost: low
+  setup_complexity: low
+  model_class: STANDARD
+  autonomy_notes: "Carries the autonomy lease, decision order, and circuit breakers (D-T2-020). Self-modification of Core policy defaults PROPOSE; guardrail weakening ASK-FIRST."
+  fallback: none
+
+- id: session-continuity-hooks
+  name: Core Continuity Hook Pack
+  layer: core
+  provides: [sessionstart-state-injection, precompact-snapshot, sessionend-best-effort]
+  requires: { capabilities: [counsel-core], tools: [] }
+  harnesses: [claude]   # hook events are Claude Code-only; other harnesses use manual checkpoint discipline (runtime/HARNESS.md)
+  optional_dependencies: []
+  status_checks: [hook, functional]
+  recommended_for: [long-running-work, autonomous-batches]
+  context_cost: low
+  setup_complexity: low
+  model_class: ECONOMY
+  autonomy_notes: "Default OFF; explicit consent + doctor compatibility validation before enablement (D-T2-009). Never load-bearing for crash recovery."
+  fallback: manual /counsel:checkpoint and /counsel:restore (fully functional without hooks)
+
+- id: builder
+  name: Builder
+  layer: builder
+  provides: [tech-lead, frontend-developer, backend-developer, test-engineer,
+             debug-specialist, git-workflow, code-review-procedure]
+  requires: { capabilities: [counsel-core], tools: [git] }
+  optional_dependencies: [superpowers]
+  status_checks: [agent, skill, rule]
+  recommended_for: [building-features, fixing-bugs, writing-tests]
+  context_cost: medium
+  setup_complexity: low
+  model_class: STANDARD
+  autonomy_notes: "Builder work is the normal EXECUTE envelope (L0-L2) subject to the lease."
+  fallback: counsel-core native plan/debug/review (advisory depth only)
+
+- id: engineering-team
+  name: Engineering Team
+  layer: engineering-team
+  provides: [principal-architect, principal-security, principal-data, adr-governance,
+             two-agent-review, performance-engineer, security-review]
+  requires: { capabilities: [counsel-core, builder], tools: [git] }
+  optional_dependencies: []
+  status_checks: [agent, skill, rule]
+  recommended_for: [authentication, authorization, tenant-isolation, architecture-review,
+                    production-readiness, data-migrations]
+  context_cost: medium
+  setup_complexity: low
+  model_class: DEEP-REASONING
+  autonomy_notes: "L3 review work; consequential outcomes default PROPOSE. DEEP-REASONING must be justified by consequence (D-T2-020 SS8)."
+  fallback: builder-native review (no independent principal certification)
+
+- id: full-os
+  name: Full OS
+  layer: full-os
+  provides: [red-team, reserve-pool, advanced-governance, advanced-automation-hooks]
+  requires: { capabilities: [counsel-core, builder, engineering-team], tools: [git] }
+  optional_dependencies: []
+  status_checks: [agent, skill, rule, hook]
+  recommended_for: [irreversible-migrations, high-consequence-decisions, multi-person-teams]
+  context_cost: high
+  setup_complexity: medium
+  model_class: DEEP-REASONING
+  autonomy_notes: "L4 + mandatory red-team before irreversible actions. Advanced automation hooks are explicit-opt-in here and nowhere below (D-T2-009)."
+  fallback: engineering-team without red-team refutation or automation
+
+- id: house-style
+  name: House Style (opinionated frontend design system)
+  layer: optional
+  provides: [frontend-design-law]
+  requires: { capabilities: [counsel-core], tools: [] }
+  optional_dependencies: []
+  status_checks: [skill]
+  recommended_for: [teams-wanting-a-ready-made-design-system]
+  context_cost: low
+  setup_complexity: none
+  model_class: STANDARD
+  autonomy_notes: "Ruled optional (D-T2-008): onboarding-selectable, overlay-suppliable, replaceable. Core stays design-system agnostic."
+  fallback: project's own design conventions
+
+- id: strategist
+  name: Strategist (deep analysis + company memory)
+  layer: optional
+  provides: [deep-analysis, company-memory]
+  requires: { capabilities: [counsel-core], tools: [claude-code, git] }
+  optional_dependencies: []
+  status_checks: [skill]
+  recommended_for: [business-strategy-decisions, product-direction, durable-company-context]
+  context_cost: low
+  setup_complexity: low
+  model_class: DEEP-REASONING
+  autonomy_notes: "Analysis is advisory; DEEP-REASONING justified by consequence (D-T2-020 SS8). Memory writes follow scaffold/memory/CONVENTIONS.md SS5 (append-at-anchor; never blind-Write). Action-plan output lands as BACKLOG candidates only (discovered != approved). External research queries never carry sensitivity-marked content."
+  fallback: counsel-core native planning (no quadrant discipline, no durable company memory)
+
+- id: github-work-sync
+  name: GitHub Issues/Projects sync
+  layer: optional
+  provides: [ticket-mirror, issue-import]
+  requires: { capabilities: [counsel-core], tools: [gh] }
+  optional_dependencies: []
+  status_checks: [script, functional]
+  recommended_for: [teams-already-on-github-issues]
+  context_cost: low
+  setup_complexity: low
+  model_class: ECONOMY
+  autonomy_notes: "Local ledger stays authoritative (D-T2-012); sync conflicts surface a diff. Outbound mirror only within EXECUTE; never closes human-priority items autonomously."
+  fallback: local-first work ledger (fully functional offline)
+
+- id: ship-loop
+  name: Ship Loop (deploy, instrument, feedback, experiment)
+  layer: optional
+  provides: [ship, instrument, feedback, experiment]
+  requires: { capabilities: [counsel-core, builder], tools: [git, node] }
+  optional_dependencies: [vercel-cli, supabase-cli, posthog, sentry]
+  status_checks: [skill, script]
+  recommended_for: [shipping-to-real-users, hypothesis-validation, feedback-loops]
+  context_cost: low
+  setup_complexity: medium
+  model_class: STANDARD
+  autonomy_notes: "Preview deploy = EXECUTE. Production deploy / domain / DNS / prod env = ASK-FIRST (work-control barred list). New SDK deps = PROPOSE; PostHog/Sentry accounts are consequential installs (separate consents). Starting an experiment that exposes real users = ASK-FIRST, no exceptions. Telemetry reading = EXECUTE; its findings land as BACKLOG candidates only (discovered != approved). Deploy/instrumentation success is proven by scripts/ship/* exit codes, never self-report."
+  fallback: builder-native manual deployment guidance; no telemetry loop
+  harnesses: [claude, cursor, codex]
+
+- id: superpowers-integration
+  name: Superpowers enhanced workflows
+  layer: optional
+  provides: [enhanced-process-skills]
+  requires: { capabilities: [counsel-core], tools: [] }
+  optional_dependencies: [superpowers]
+  status_checks: [functional]
+  recommended_for: [users-who-already-run-superpowers]
+  context_cost: medium
+  setup_complexity: none
+  model_class: STANDARD
+  autonomy_notes: "Optional integration (D-T2-004). Detection must be FUNCTIONAL (its SessionStart hook actually fires -- silent Windows degradation exists upstream). Its absence is never unhealthy. Installing it is a third-party plugin install: ASK-FIRST."
+  fallback: counsel-native debugging/review/verification (always present in Core)

@@ -1,0 +1,13 @@
+{
+  "name": "counsel-os",
+  "owner": { "name": "Sam Sherzad" },
+  "description": "Pre-alpha marketplace for the Counsel Engineering OS",
+  "plugins": [
+    {
+      "name": "counsel",
+      "source": "./",
+      "description": "AI CTO and engineering team for Claude Code that starts small and grows with your project. Pre-alpha - expect rough edges; setup completes on Windows only.",
+      "category": "productivity"
+    }
+  ]
+}

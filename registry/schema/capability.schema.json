@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Counsel capability",
+  "type": "object",
+  "required": ["id", "name", "layer", "provides", "requires", "context_cost", "fallback"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "name": { "type": "string" },
+    "layer": { "enum": ["core", "builder", "engineering-team", "full-os", "optional"] },
+    "provides": { "type": "array", "items": { "type": "string" } },
+    "requires": {
+      "type": "object",
+      "properties": {
+        "capabilities": { "type": "array", "items": { "type": "string" } },
+        "tools": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "optional_dependencies": { "type": "array", "items": { "type": "string" } },
+    "status_checks": { "type": "array", "items": { "enum": ["agent", "skill", "rule", "script", "hook", "functional"] } },
+    "recommended_for": { "type": "array", "items": { "type": "string" } },
+    "context_cost": { "enum": ["none-dormant", "low", "medium", "high"] },
+    "setup_complexity": { "enum": ["none", "low", "medium", "high"] },
+    "model_class": { "enum": ["ECONOMY", "STANDARD", "DEEP-REASONING"], "description": "Default semantic model class for this capability's work (D-T2-016); mapped to concrete models at config time." },
+    "autonomy_notes": { "type": "string", "description": "Constraints from the autonomy governance ruling (D-T2-020) that bind this capability." },
+    "harnesses": { "type": "array", "items": { "enum": ["claude", "cursor", "codex"] }, "description": "Harnesses this capability works on. Absent = all harnesses (portable core default)." },
+    "fallback": { "type": "string", "description": "What works without this capability. 'none' only for counsel-core itself." }
+  }
+}

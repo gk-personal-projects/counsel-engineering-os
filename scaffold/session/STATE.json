@@ -1,0 +1,12 @@
+{
+  "schema_version": 2,
+  "phase": null,
+  "gate": null,
+  "status": "NEW",
+  "workspace": null,
+  "active_ticket": null,
+  "git": {},
+  "next_action": null,
+  "last_checkpoint": null,
+  "last_updated": null
+}

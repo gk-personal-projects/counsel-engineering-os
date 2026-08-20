@@ -1,0 +1,30 @@
+Counsel Engineering OS
+Copyright 2026 Sam Sherzad
+
+Created and maintained by Sam Sherzad.
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+You may obtain a copy of the License at
+http://www.apache.org/licenses/LICENSE-2.0
+
+Apache-2.0 section 4 requires that anyone redistributing this work, or a
+derivative of it, retains the copyright and attribution notices above and
+carries a copy of this NOTICE file. Attribution to the original author is a
+condition of the licence, not a courtesy.
+
+Licence history: released under Apache-2.0 from counsel--v0.1.0 through
+counsel--v0.1.7; relicensed to PolyForm Noncommercial 1.0.0 at counsel--v0.1.8;
+returned to Apache-2.0 at counsel--v0.1.9 to allow unrestricted evaluation and
+use while keeping attribution mandatory. The Apache-2.0 grant on any version is
+irrevocable for anyone who received that version.
+
+This product's design lineage includes Agent Scaffold
+(https://github.com/jeremyary/agent-scaffold), licensed under the
+Apache License, Version 2.0. Any file containing derived material carries
+a "Modified from Agent Scaffold" notice in its header and is classified
+DERIVED in PROVENANCE.md. As of this release no file in this distribution is
+so classified; this acknowledgment is retained for the lineage.
+
+This product's optional integrations may reference Superpowers
+(https://github.com/obra/superpowers), MIT License, Copyright (c) 2025
+Jesse Vincent. No Superpowers code is included in this distribution.
