@@ -14,7 +14,7 @@ baseline, ownership manifest). The plugin cannot and does not touch your setting
 inject always-on rules by itself — only the consented onboard flow writes to your project.
 
 Since 0.1.5 the runtime is a **portable core**: `install-plan.ps1 -Harness cursor|codex`
-stages the same logic for other harnesses (AGENTS.md natively, skills to
+(or its POSIX sibling `install-plan.sh`, same flags) stages the same logic for other harnesses (AGENTS.md natively, skills to
 `.cursor/skills/` / `.codex/skills/`, agents as role cards). See `docs/PORTABILITY.md`;
 those adapters are specified but not yet live-validated.
 
@@ -23,13 +23,14 @@ those adapters are specified but not yet live-validated.
 
 | Platform | Status |
 |---|---|
-| Windows 10/11 (PowerShell 5.1+) | **Supported.** The tested path |
-| macOS | **Onboarding unsupported.** The plugin installs and every file is readable, but `/counsel:onboard` cannot complete — `scripts/install/install-plan.ps1` and `install-apply.ps1` have no shell equivalents. A `.sh` port is tracked, not scheduled |
-| Linux | Untested. Same installer constraint as macOS |
+| Windows 10/11 (PowerShell 5.1+) | **Supported.** The longest-tested path |
+| macOS | **Supported, newly ported.** `/counsel:onboard` completes via the POSIX `.sh` installers (`scripts/install/install-plan.sh`, `install-apply.sh` — same flags, semantics, and exit codes as the `.ps1` siblings). Needs git + python3, both provided by the Xcode Command Line Tools |
+| Linux | **Supported, newly ported.** Same POSIX installers; needs git + coreutils + python3. The bash test suites run here |
 
-Installing PowerShell on macOS is **not** a supported workaround: availability of `pwsh` does
-not establish that these PS5.1 scripts, their path handling, and their assumptions behave
-correctly there. Nobody has tested it. Do not put it in front of a first-time user.
+The POSIX port is new: it is exercised by the ported test suites (which run on Linux) and
+written for macOS's stock bash 3.2 and BSD userland, but has not yet been field-tested on a
+Mac. Installing PowerShell on macOS remains unnecessary and unsupported — use the `.sh`
+scripts there.
 
 ## Path A — your own machine
 
@@ -82,21 +83,29 @@ runtime it reports **RUNTIME VERSION SKEW** and walks you through the update flo
 
 ## Repair, recovery, uninstall
 
-- **Repair** (missing/damaged Counsel-owned files): `scripts/install/repair.ps1 -Target <project>`.
+- **Repair** (missing/damaged Counsel-owned files): `scripts/install/repair.ps1 -Target <project>`
+  on Windows, `bash scripts/install/repair.sh -Target <project>` on macOS/Linux.
   Locally-modified owned files are preserved unless you pass `-IncludeModified` (originals
   are backed up first). Repair refuses to cross versions — that's an update.
 - **Recovery to a previous version:** previous immutable versions are retained in the plugin
   cache (`~/.claude/plugins/cache/counsel-os/counsel/<version>/`). Re-run the plan+apply flow
   with `-Source` pointed at the prior version directory; the doctor will explain the
   resulting skew until the plugin registration matches.
-- **Uninstall:** `scripts/install/uninstall.ps1 -Target <project>` removes ONLY
+- **Uninstall:** `scripts/install/uninstall.ps1 -Target <project>` on Windows,
+  `bash scripts/install/uninstall.sh -Target <project>` on macOS/Linux. Removes ONLY
   Counsel-owned files that you haven't modified. Your code, constitution, settings, config,
   session state, and any owned file you edited are all preserved; the ownership manifest is
   archived to `.counsel/originals/` for audit. `claude plugin uninstall counsel@counsel-os`
   removes the runtime itself.
 
-## Windows notes
+## Platform notes
 
-Everything above runs in Windows PowerShell 5.1+ with git as the only requirement — no
-Git Bash, Python, or other tooling needed. The optional continuity hook pack ships
-default-OFF and, when enabled, invokes `powershell.exe` explicitly.
+**Windows:** everything above runs in Windows PowerShell 5.1+ with git as the only
+requirement — no Git Bash, Python, or other tooling needed. The optional continuity hook
+pack ships default-OFF and, when enabled, invokes `powershell.exe` explicitly.
+
+**macOS / Linux:** the `.sh` installers run on bash 3.2+ (macOS's stock bash) with
+git + coreutils + python3. python3 is the JSON engine — the one addition to the
+"git only" rule for the install/doctor family. On macOS it is effectively free: python3
+arrives with the Xcode Command Line Tools, the same install that provides git, so any
+Mac that can clone the repo can run the installer.

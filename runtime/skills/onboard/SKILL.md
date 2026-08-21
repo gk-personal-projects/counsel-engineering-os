@@ -28,15 +28,20 @@ agent/skill/hook internals. Never ask "which agents do you want?" — ask what t
 5. **On approval, instantiate via the deterministic installer** (never hand-copy):
    a. Compose the constitution from `scaffold/templates/CLAUDE.md.template` (facts from
       detection, not invention) into a temp file.
-   b. `scripts/install/install-plan.ps1 -Target <project> -Layers <ruled layers>
-      -ClaudeMdContentPath <temp> -Mode <mode>` (source auto-resolves to the installed
-      plugin). Read PLAN.json.
+   b. Run the platform installer (source auto-resolves to the installed plugin):
+      - Windows: `scripts/install/install-plan.ps1 -Target <project> -Layers <ruled layers>
+        -ClaudeMdContentPath <temp> -Mode <mode>`
+      - POSIX: `bash scripts/install/install-plan.sh -Target <project> -Layers <ruled layers>
+        -ClaudeMdContentPath <temp> -Mode <mode>`
+      Read PLAN.json.
    c. Present the plan: CREATE items as a summary; every MERGE/CONFLICT individually.
       **Permission changes (`.claude/settings.json`) are ALWAYS a separate explicit
       consent — show the exact diff; never bundle it into blanket approval.** CONFLICT
       items are never applied — offer resolution, then re-plan.
-   d. Record the user's ruling per item into PLAN.json (`approved: true/false`), then
-      `scripts/install/install-apply.ps1 -PlanPath <PLAN.json>`. Apply is atomic,
+   d. Record the user's ruling per item into PLAN.json (`approved: true/false`), then apply:
+      - Windows: `scripts/install/install-apply.ps1 -PlanPath <PLAN.json>`
+      - POSIX: `bash scripts/install/install-apply.sh -PlanPath <PLAN.json>`
+      Apply is atomic,
       backs up replaced originals to `.counsel/originals/`, writes the ownership
       manifest (`.counsel/manifest.json`), post-verifies hashes, and refuses stale
       plans (re-plan on drift). Rerun is idempotent.

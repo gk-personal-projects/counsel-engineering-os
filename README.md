@@ -5,10 +5,12 @@ backlogs and executes software work. It starts small, grows with your project, a
 anything consequential.
 
 > ### ⚠ Platform support, before you install
-> **Setup completes on Windows only.** On macOS and Linux the plugin installs and every file is
-> readable, but `/counsel:onboard` **cannot finish** — the installer scripts are PowerShell and have
-> no shell equivalents yet. Installing `pwsh` on a Mac is *not* a supported workaround; nobody has
-> tested that path. A `.sh` port is the top priority. See [`docs/INSTALL.md`](docs/INSTALL.md).
+> **Setup completes on Windows, macOS, and Linux.** The installer family now ships in two
+> forms: PowerShell (`.ps1`) and POSIX shell (`.sh`) with the same contracts and exit codes.
+> Windows remains the longest-tested path; the POSIX port is new — exercised by the ported
+> test suites (run on Linux) and written for macOS's stock bash 3.2 and BSD userland, but not
+> yet field-tested on a Mac. On macOS/Linux you need git + python3 (on a Mac both arrive with
+> the Xcode Command Line Tools). Still pre-alpha everywhere. See [`docs/INSTALL.md`](docs/INSTALL.md).
 
 **What you get**
 - ✓ technical guidance from a CTO that groks your codebase before judging
@@ -21,7 +23,7 @@ anything consequential.
 
 **New here? Start with [`docs/QUICKSTART.md`](docs/QUICKSTART.md)** — every step has a check so
 you know it worked, plus how to actually use Counsel once it's installed. Read the platform
-note at the top first: setup completes on Windows only today.
+note at the top first: setup completes on Windows, macOS, and Linux, with the POSIX path newly ported.
 
 **Quick start** (full detail + teammate path: `docs/INSTALL.md`)
 
@@ -41,4 +43,4 @@ Counsel-owned files; optional tools you don't have never make Counsel look broke
 Counsel never expands its own authority, budget, or autonomy.
 
 Docs: `docs/QUICKSTART.md` → `START-HERE.md` → `docs/INSTALL.md` → `docs/ARCHITECTURE.md` ·
-License: **Apache-2.0** (see LICENSE, NOTICE, PROVENANCE.md). Free to use, modify and redistribute, commercially or not — the one condition is that you keep the copyright and NOTICE attribution to Sam Sherzad. · Status: pre-alpha (see VERSION) — expect rough edges; setup completes on Windows only.
+License: **Apache-2.0** (see LICENSE, NOTICE, PROVENANCE.md). Free to use, modify and redistribute, commercially or not — the one condition is that you keep the copyright and NOTICE attribution to Sam Sherzad. · Status: pre-alpha (see VERSION) — expect rough edges; setup completes on Windows, macOS, and Linux (the POSIX install path is newly ported).

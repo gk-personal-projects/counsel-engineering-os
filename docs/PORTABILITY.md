@@ -25,9 +25,12 @@ features as thin adapters only.
 
 ## Install per harness
 
-`scripts/install/install-plan.ps1 -Target <proj> -Harness claude|cursor|codex` →
-review PLAN.json → `install-apply.ps1`. The ownership manifest, repair, uninstall, and
-doctor work identically on every harness (they are path-driven, not harness-driven).
+`scripts/install/install-plan.ps1` (Windows) or `bash scripts/install/install-plan.sh`
+(POSIX — same flags) `-Target <proj> -Harness claude|cursor|codex` →
+review PLAN.json → `install-apply.ps1` / `install-apply.sh`. The ownership manifest,
+repair, uninstall, and doctor work identically on every harness (they are path-driven,
+not harness-driven) — and now on every platform: the `.sh` ports provide POSIX parity
+with the same contracts and exit codes.
 `.counsel/config.yaml` records `harness:` + `runtime_version` so doctor's version-skew
 check is harness-agnostic.
 

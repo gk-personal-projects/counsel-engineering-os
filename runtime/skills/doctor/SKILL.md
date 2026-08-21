@@ -30,7 +30,8 @@ Check families (drive from the registries, not hardcoded lists):
    reopens, failed attempts, scope-drift stops).
 8. **Credential liveness (D-T2-030)** — for every `credentials:` entry in dependencies.yaml
    whose `required_by` intersects the installed capabilities: is the credential configured,
-   and does it actually still work? Engine: `scripts/doctor-credentials.ps1`.
+   and does it actually still work? Engine: `scripts/doctor-credentials.ps1` (Windows) /
+   `scripts/doctor-credentials.sh` (POSIX).
 
 ## Credential liveness — the rule that changes READY
 

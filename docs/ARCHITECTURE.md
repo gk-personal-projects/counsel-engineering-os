@@ -42,7 +42,7 @@ any capability.
 - Session state (`.counsel/session/` — private, gitignore'd by default)
 
 ### Install mechanics across the boundary
-The installer (`install-plan.ps1 -Harness claude|cursor|codex`) stages rules to the
+The installer (`install-plan.ps1` / `install-plan.sh` `-Harness claude|cursor|codex`) stages rules to the
 harness-neutral `.counsel/rules/`, agents to `.claude/agents/` (Claude) or
 `.counsel/agents/` (role cards elsewhere), skills to `.codex/skills/` / `.cursor/skills/`
 where no plugin channel exists, assembles `AGENTS.md` with the sentinel rules region, and

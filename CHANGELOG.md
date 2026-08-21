@@ -288,3 +288,24 @@ tag. Together they close the loop the 0.1.6 version-skew defect opened and 0.1.9
 reopened from the other end.
 
 No runtime behaviour changes.
+
+## Unreleased
+POSIX port of the install/doctor script family. The Windows-only setup constraint
+documented since 0.1.4 is closed. Windows behaviour unchanged.
+
+- POSIX (`.sh`) ports of `scripts/install/install-plan`, `install-apply`, `repair`,
+  `uninstall`, `scripts/doctor`, and `scripts/doctor-credentials` — same contracts and
+  exit codes as the `.ps1` siblings, accepting both PowerShell-style named flags and GNU
+  long flags. Shared helpers live in `scripts/lib/common.sh`. Written for macOS's stock
+  bash 3.2 and BSD userland; exercised by the ported test suites, which run on Linux —
+  not yet field-tested on a Mac, and the docs say so rather than rounding up.
+- Bash test suites (`tests/*.sh`) plus `tests/run-all.sh` mirror the PowerShell suites.
+- `python3` is the documented POSIX JSON dependency — the one addition to the "git only"
+  rule for the install/doctor family. On macOS it arrives with the Xcode Command Line
+  Tools, the same install that provides git, so in practice it costs nothing extra.
+- One deliberate fix ported into doctor: the model-map lookup now checks
+  `adapters/claude/model-map.json` first, matching install-plan.
+- Docs (`README.md`, `docs/QUICKSTART.md`, `docs/INSTALL.md`, `docs/ARCHITECTURE.md`,
+  `docs/PORTABILITY.md`, `docs/DISTRIBUTION.md`) and the onboard/doctor skills updated
+  for dual dispatch (Windows `.ps1` / POSIX `.sh`); the plugin manifests no longer say
+  setup completes on Windows only.

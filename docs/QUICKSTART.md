@@ -17,14 +17,14 @@ a crash or a context reset doesn't lose your place.
 
 | Platform | Status |
 |---|---|
-| **Windows 10/11** (PowerShell 5.1+) | **Supported.** This is the tested path |
-| **macOS** | **Setup does not complete.** The plugin installs and every file is readable, but `/counsel:onboard` cannot finish — its installer is PowerShell and has no shell equivalent yet |
-| **Linux** | Untested. Same installer constraint as macOS |
+| **Windows 10/11** (PowerShell 5.1+) | **Supported.** This is the longest-tested path |
+| **macOS** | **Supported, newly ported.** `/counsel:onboard` now finishes via the POSIX (`.sh`) installers. Needs git + python3 — on a Mac both arrive with the Xcode Command Line Tools |
+| **Linux** | **Supported, newly ported.** Same POSIX installers; needs git + coreutils + python3. This is where the ported test suites run |
 
-Installing PowerShell on macOS is **not** a workaround. `pwsh` existing does not mean these
-scripts behave correctly there — nobody has tested it, so don't build on it.
-
-If you're not on Windows, you can still read the code and form a view. You cannot yet run it.
+You do **not** need PowerShell on macOS or Linux — the `.sh` scripts are the supported path
+there. "Newly ported" means exactly that: the POSIX scripts are exercised by the ported test
+suites (run on Linux) and written for macOS's stock bash 3.2 and BSD userland, but they have
+not yet been field-tested on a Mac. Expect pre-alpha edges and report them.
 
 ---
 
@@ -34,6 +34,7 @@ If you're not on Windows, you can still read the code and form a view. You canno
 |---|---|
 | A GitHub account with access to the repo | You can open the repository page and see files, not a 404 |
 | Git installed | `git --version` returns a version number |
+| Python 3 (macOS/Linux only) | `python3 --version` returns a version number — on a Mac it ships with the Xcode Command Line Tools, the same install that provides git |
 | A Claude subscription or API access | You'll be prompted to sign in during step 1 |
 
 ---

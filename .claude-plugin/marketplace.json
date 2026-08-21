@@ -6,7 +6,7 @@
     {
       "name": "counsel",
       "source": "./",
-      "description": "AI CTO and engineering team for Claude Code that starts small and grows with your project. Pre-alpha - expect rough edges; setup completes on Windows only.",
+      "description": "AI CTO and engineering team for Claude Code that starts small and grows with your project. Pre-alpha - expect rough edges; setup completes on Windows, macOS, and Linux.",
       "category": "productivity"
     }
   ]
