@@ -43,9 +43,16 @@ import json
 import os
 import re
 import shutil
+import signal
 import subprocess
 import sys
 from datetime import datetime, timedelta, timezone
+
+# Behave like a normal Unix filter when stdout is closed early (e.g. | head).
+try:
+    signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+except (AttributeError, ValueError):
+    pass
 
 project_dir = sys.argv[1]
 os_dir = sys.argv[2]
