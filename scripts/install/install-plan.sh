@@ -376,7 +376,8 @@ if harness == "cursor":
         )
 
 # 6. .claude/settings.json proposal (claude only; user-owned; ALWAYS approval-gated)
-if harness == "claude" and install_settings_baseline == "yes":
+# (PS -eq is case-insensitive; mirror that for the "yes" literal.)
+if harness == "claude" and install_settings_baseline.lower() == "yes":
     baseline = json.loads(
         read_text(os.path.join(source, "scaffold", "templates", "settings-baseline.json"))
     )
